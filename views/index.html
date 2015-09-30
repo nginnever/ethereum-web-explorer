@@ -1,0 +1,93 @@
+<html>
+<head>
+  <title>JavaScript API</title>
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js">
+  <link rel="stylesheet" href="css/style.css">
+  <script type="text/javascript" src="js/node_modules/bignumber.js/bignumber.min.js"></script>
+  <script type="text/javascript" src="js/web3-light.js"></script>
+</head>
+
+<body>
+
+  <div id='main' class="container">
+    <nav class ="navbar-fluid navbar-default navbar-fixed-top" style="margin-left:-680px;">
+      <div class="container">
+        <a class="navbar-header" style="position: relative; top:-5px; height: 50px; margin-left:10px; color:black;" href="https://github.com/ethereum/wiki/wiki/JavaScript-API"><h3>Javascript Ethereum API</h3></a>
+        <a class="navbar-header" style="position: relative; top:5px; height: 40px; margin-left:50px;" href="http://www.digitalmoneycorp.com"><img src="images/NetID_png_1433452694.png" style="width:100px; height:40px;"></a>
+        <a class="navbar-header" style="position: relative; top:5px; height: 50px; margin-left:20px;" href="https://www.ethereum.org/"><img src="images/ETHEREUM_NAV-BAR-LOGO.png" style="width:150px; height:35px;"></a>
+        <a class="navbar-header" style="position: relative; top:5px; height: 50px;" href="http://ipfs.io"><img src="images/ipfs-logo-text-256-ice.png" style="width:100px; height:40px; margin-left:20px;"></a>
+      </div>
+    </nav>
+  </div>
+
+  <div class="jumbotron">
+    <h5>Coinbase Address: <strong id="coinbase"></strong></h5>
+    <h5>Balance: <strong id="balance"></strong></h5>
+    <h5>Latest Block Number: <strong id="latestBlock"></strong></h5>
+    <h5>Latest Block Timestamp: <strong id="latestBlockTimestamp"></strong></h5>
+    <h5>Latest Block Hash: <strong id="latestBlockHash"></strong></h5>
+    <h5>Gas Limit: <strong id="gasLimit"></strong></h5>
+    <h5>Gas Used: <strong id="gasUsed"></strong></h5>
+    <h5>Nonce: <strong id="nonce"></strong></h5>
+    <h5>State Root: <strong id="stateRoot"></strong></h5>
+    <br>
+  </div>
+
+<script type="text/javascript">
+  var web3 = require('web3');
+
+  web3.setProvider(new web3.providers.HttpProvider());
+
+    //var coinbase = web3.eth.coinbase;
+    var coinbase = web3.eth.accounts[1];
+    var balance = web3.fromWei(web3.eth.getBalance(coinbase), "ether");
+
+    //preload the page with the latest block info
+    web3.eth.getBlock('latest', function(error, result){
+        if(!error){
+          document.getElementById('latestBlock').innerHTML = result.number;
+          document.getElementById('latestBlockTimestamp').innerHTML = result.timestamp;
+          document.getElementById('gasLimit').innerHTML = result.gasLimit;
+          document.getElementById('gasUsed').innerHTML = result.gasUsed;
+          document.getElementById('latestBlockHash').innerHTML = result.hash;
+          document.getElementById('nonce').innerHTML = result.nonce;
+          document.getElementById('stateRoot').innerHTML = result.stateRoot;
+          console.log(result)
+        }
+        else
+          console.error(error);
+      });
+
+    //preload page with account info
+    document.getElementById('coinbase').innerHTML = coinbase;
+    document.getElementById('balance').innerHTML = balance;
+
+    //code to monitor coinbase
+    var filter = web3.eth.filter('pending');
+    filter.watch(function(err, log){
+      web3.eth.getBlock('latest', function(error, result){
+        if(!error){
+          document.getElementById('latestBlock').innerHTML = result.number;
+          document.getElementById('latestBlockTimestamp').innerHTML = result.timestamp;
+          document.getElementById('gasLimit').innerHTML = result.gasLimit;
+          document.getElementById('gasUsed').innerHTML = result.gasUsed;
+          document.getElementById('latestBlockHash').innerHTML = result.hash;
+          document.getElementById('nonce').innerHTML = result.nonce;
+          document.getElementById('stateRoot').innerHTML = result.stateRoot;
+          console.log(result)
+        }
+        else
+          console.error(error);
+      });
+
+      if(!err){
+        //console.log(log);
+      }
+    });
+
+</script>
+
+</body>
+
+</html>
