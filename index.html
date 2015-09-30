@@ -27,8 +27,10 @@
     <h5>Latest Block Number: <strong id="latestBlock"></strong></h5>
     <h5>Latest Block Timestamp: <strong id="latestBlockTimestamp"></strong></h5>
     <h5>Latest Block Hash: <strong id="latestBlockHash"></strong></h5>
-    <h5>Contract String: <strong id="contractString"></strong></h5>
-    <h5>Favourite Python: <strong id="favouritePython"></strong></h5>
+    <h5>Gas Limit: <strong id="gasLimit"></strong></h5>
+    <h5>Gas Used: <strong id="gasUsed"></strong></h5>
+    <h5>Nonce: <strong id="nonce"></strong></h5>
+    <h5>State Root: <strong id="stateRoot"></strong></h5>
     <br>
   </div>
 
@@ -39,33 +41,50 @@
 
     //var coinbase = web3.eth.coinbase;
     var coinbase = web3.eth.accounts[1];
-    var balance = web3.eth.getBalance(coinbase);
+    var balance = web3.fromWei(web3.eth.getBalance(coinbase), "ether");
 
+    //preload the page with the latest block info
+    web3.eth.getBlock('latest', function(error, result){
+        if(!error){
+          document.getElementById('latestBlock').innerHTML = result.number;
+          document.getElementById('latestBlockTimestamp').innerHTML = result.timestamp;
+          document.getElementById('gasLimit').innerHTML = result.gasLimit;
+          document.getElementById('gasUsed').innerHTML = result.gasUsed;
+          document.getElementById('latestBlockHash').innerHTML = result.hash;
+          document.getElementById('nonce').innerHTML = result.nonce;
+          document.getElementById('stateRoot').innerHTML = result.stateRoot;
+          console.log(result)
+        }
+        else
+          console.error(error);
+      });
+
+    //preload page with account info
     document.getElementById('coinbase').innerHTML = coinbase;
     document.getElementById('balance').innerHTML = balance;
 
     //code to monitor coinbase
     var filter = web3.eth.filter('pending');
     filter.watch(function(err, log){
+      web3.eth.getBlock('latest', function(error, result){
+        if(!error){
+          document.getElementById('latestBlock').innerHTML = result.number;
+          document.getElementById('latestBlockTimestamp').innerHTML = result.timestamp;
+          document.getElementById('gasLimit').innerHTML = result.gasLimit;
+          document.getElementById('gasUsed').innerHTML = result.gasUsed;
+          document.getElementById('latestBlockHash').innerHTML = result.hash;
+          document.getElementById('nonce').innerHTML = result.nonce;
+          document.getElementById('stateRoot').innerHTML = result.stateRoot;
+          console.log(result)
+        }
+        else
+          console.error(error);
+      });
+
       if(!err){
-        document.getElementById('latestBlockHash').innerHTML = log;
-        console.log(log);
+        //console.log(log);
       }
-    })
-    // web3.eth.watch({altered: web3.eth.coinbase}).changed(function(){
-    // ///Your code goes here.
-    //   web3.eth.coinbase.then(function(result) {
-    //     document.getElementById('coinbase').innerText = result;
-    //   });
-    //   web3.eth.balanceAt(web3.eth.coinbase).then(function(result){
-    //     document.getElementById('balance').innerText = result;
-    //   });
-    // });
-
-  ///Insert your contract address var here:
-   
-
-  ///Second web3.eth.watch code to monitor block number
+    });
 
 </script>
 
